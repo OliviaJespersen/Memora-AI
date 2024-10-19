@@ -59,15 +59,15 @@ class GraphicalUserInterface:
 
         self.btn_add = ttk.Button(master=frm_buttons, command=self.add_button, state=DISABLED, text="Add")
         self.btn_add.grid(column=0, row=0, padx=(0,8), pady=(10,6), sticky=EW)
-
-        self.btn_remove = ttk.Button(master=frm_buttons, command=self.remove_button, state=DISABLED, text="Remove")
-        self.btn_remove.grid(column=1, row=0, padx=4, pady=(10,6), sticky=EW)
         
+        self.btn_manual_add = ttk.Button(master=frm_buttons, command=self.manual_add_button, state=DISABLED, text="Manual Add")
+        self.btn_manual_add.grid(column=1, row=0, padx=4, pady=(10,6), sticky=EW)
+
         self.btn_add_all = ttk.Button(master=frm_buttons, command=self.add_all_button, state=DISABLED, text="Add all")
         self.btn_add_all.grid(column=2, row=0, padx=(8,0), pady=(10,6), sticky=EW)
         
-        self.btn_manual_add = ttk.Button(master=frm_buttons, command=self.manual_add_button, state=DISABLED, text="Manual Add")
-        self.btn_manual_add.grid(column=0, row=1, padx=(0,8), pady=(6,0), sticky=EW)
+        self.btn_remove = ttk.Button(master=frm_buttons, command=self.remove_button, state=DISABLED, text="Remove")
+        self.btn_remove.grid(column=0, row=1, padx=(0,8), pady=(6,0), sticky=EW)
         
         self.btn_reanalyze = ttk.Button(master=frm_buttons, command=self.reanalyze_button, state=DISABLED, text="Reanalyze")
         self.btn_reanalyze.grid(column=1, row=1, padx=4, pady=(6,0), sticky=EW)
