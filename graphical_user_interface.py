@@ -10,7 +10,7 @@ from tkinter.filedialog import askdirectory
 
 
 class GraphicalUserInterface:
-    def __init__(self, open_directory, search, show_all, change_active_file, add, remove, add_all, manual_add, reanalyze, clean, edit_image_text, edit_tags, call_count):
+    def __init__(self, open_directory, search, show_all, change_active_file, add, remove, add_all, manual_add, reanalyze, open, edit_image_text, edit_tags, call_count):
         self.open_directory_button = open_directory
         self.search_button = search
         self.show_all_button = show_all 
@@ -20,7 +20,7 @@ class GraphicalUserInterface:
         self.add_all_button = add_all
         self.manual_add_button = manual_add
         self.reanalyze_button = reanalyze
-        self.clean_button = clean
+        self.open_button = open
         self.edit_image_text_button = edit_image_text
         self.edit_tags_button = edit_tags
 
@@ -72,8 +72,8 @@ class GraphicalUserInterface:
         self.btn_reanalyze = ttk.Button(master=frm_buttons, command=self.reanalyze_button, state=DISABLED, text="Reanalyze")
         self.btn_reanalyze.grid(column=1, row=1, padx=4, pady=(6,0), sticky=EW)
         
-        self.btn_clean = ttk.Button(master=frm_buttons, command=self.clean_button, state=DISABLED, text="Clean")
-        self.btn_clean.grid(column=2, row=1, padx=(8,0), pady=(6,0), sticky=EW)
+        self.btn_open = ttk.Button(master=frm_buttons, command=self.open_button, state=DISABLED, text="Open")
+        self.btn_open.grid(column=2, row=1, padx=(8,0), pady=(6,0), sticky=EW)
 
         self.lbl_call_counter = ttk.Label(master=frm_left_bar)
         self._update_call_counter(self.call_count)
@@ -150,7 +150,7 @@ class GraphicalUserInterface:
     def open_directory(self, active_directory, files_in_db, files_not_in_db):
         self.active_directory = active_directory
         self.lbl_directory.configure(text=os.path.basename(self.active_directory))
-        for button in [self.btn_add_all, self.btn_clean, self.btn_search, self.btn_show_all]:
+        for button in [self.btn_add_all, self.btn_search, self.btn_show_all]:
             button.configure(state=ACTIVE)
 
         self.files_in_db = files_in_db
@@ -179,8 +179,8 @@ class GraphicalUserInterface:
         self.ent_tags.insert(END, self.active_tags)
         self.lbl_image_name.configure(text=self.active_file_name)
 
-        states = [DISABLED, DISABLED, ACTIVE, ACTIVE, ACTIVE, ACTIVE] if self.active_file_name in self.files_in_db else [ACTIVE, ACTIVE, DISABLED, DISABLED, DISABLED, DISABLED]
-        buttons = [self.btn_manual_add, self.btn_add, self.btn_remove, self.btn_reanalyze, self.btn_image_text_edit, self.btn_tags_edit]
+        states = [ACTIVE, DISABLED, DISABLED, ACTIVE, ACTIVE, ACTIVE, ACTIVE] if self.active_file_name in self.files_in_db else [ACTIVE, ACTIVE, ACTIVE, DISABLED, DISABLED, DISABLED, DISABLED]
+        buttons = [self.btn_open, self.btn_manual_add, self.btn_add, self.btn_remove, self.btn_reanalyze, self.btn_image_text_edit, self.btn_tags_edit]
         for i in range(len(buttons)):
             buttons[i].configure(state=states[i])
 
@@ -225,8 +225,8 @@ class GraphicalUserInterface:
         self._update_call_counter(self.call_count)
 
 
-    def clean(self, nr_cleaned):
-        self.info_message_box("1 unused entry was cleaned" if nr_cleaned == 1 else f"{nr_cleaned} unused entries were cleaned")
+    def open(self):
+        Image.open(self.active_directory+"/"+self.active_file_name).show()
 
 
     def edit_image_text(self):

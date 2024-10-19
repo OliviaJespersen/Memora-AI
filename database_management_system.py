@@ -72,8 +72,6 @@ class DatabaseManagementSystem:
     
 
     def clean(self):
-        delete_list = [file_name for file_name in self.metadata if not file_name in os.listdir(self.active_directory)]
-        for file_name in delete_list:
+        for file_name in [file_name for file_name in self.metadata if not file_name in os.listdir(self.active_directory)]:
             del self.metadata[file_name]
         self.save_metadata()
-        return len(delete_list)

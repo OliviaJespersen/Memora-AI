@@ -29,6 +29,7 @@ def open_directory():
         image_database = database_management_system.DatabaseManagementSystem(database_file_path, True)
     else:
         image_database = database_management_system.DatabaseManagementSystem(database_file_path, False)
+    image_database.clean()
     
     active_directory = new_directory
 
@@ -113,9 +114,8 @@ def reanalyze():
         user_interface.error_message_box(str(e))
 
 
-def clean():
-    nr_cleaned = image_database.clean()
-    user_interface.clean(nr_cleaned)
+def open():
+    user_interface.open()
 
 
 def edit_image_text():
@@ -136,7 +136,7 @@ def main():
     global user_interface
 
     call_counter.clean()
-    user_interface = graphical_user_interface.GraphicalUserInterface(open_directory, search, show_all, change_active_file, add, remove, add_all, manual_add, reanalyze, clean, edit_image_text, edit_tags, call_counter.get_count())
+    user_interface = graphical_user_interface.GraphicalUserInterface(open_directory, search, show_all, change_active_file, add, remove, add_all, manual_add, reanalyze, open, edit_image_text, edit_tags, call_counter.get_count())
     user_interface.build_gui("placeholder.png")
 
 
