@@ -107,7 +107,7 @@ def manual_add():
 def reanalyze():
     try:
         call_counter.new_call()
-        image_database.reanalyze_entry(active_file_name)
+        image_database.reanalyze_entry(active_file_name, gemini_ai.generate_description(active_directory+"/"+active_file_name))
         user_interface.reanalyze(image_database.get_image_text(active_file_name), image_database.get_tags(active_file_name))
     except Exception as e:
         user_interface.error_message_box(str(e))

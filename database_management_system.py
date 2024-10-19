@@ -35,8 +35,8 @@ class DatabaseManagementSystem:
         self.save_metadata()
 
 
-    def reanalyze_entry(self, file_name):
-        self.add_entry(file_name)
+    def reanalyze_entry(self, file_name, description):
+        self.add_entry(file_name, description)
 
 
     def get_image_text(self, file_name):
