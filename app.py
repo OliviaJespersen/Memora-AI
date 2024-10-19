@@ -137,7 +137,7 @@ def main():
 
     call_counter.clean()
     user_interface = graphical_user_interface.GraphicalUserInterface(open_directory, search, show_all, change_active_file, add, remove, add_all, manual_add, reanalyze, clean, edit_image_text, edit_tags, call_counter.get_count())
-    user_interface.build_gui("/Users/oliviajespersen/Documents/Memora AI/placeholder.png")
+    user_interface.build_gui("placeholder.png")
 
 
 if __name__ == "__main__":
