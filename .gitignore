@@ -1,0 +1,7 @@
+__pycache__/
+.venv/
+for_testing/
+config.json
+calls.json
+todo.txt
+.DS_Store
