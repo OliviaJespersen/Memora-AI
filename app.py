@@ -6,8 +6,8 @@ import database_management_system
 import ai_image_analysis
 import graphical_user_interface
 
-gemini_ai = ai_image_analysis.AiImageAnalysis("/Users/oliviajespersen/Documents/Memora AI/config.json")
-call_counter = daily_api_call_counter.DailyApiCallCounter("/Users/oliviajespersen/Documents/Memora AI/calls.json")
+gemini_ai = ai_image_analysis.AiImageAnalysis("config.json")
+call_counter = daily_api_call_counter.DailyApiCallCounter("calls.json")
 active_directory = None
 active_file_name = None
 image_database = None
