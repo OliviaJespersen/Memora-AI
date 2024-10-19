@@ -267,7 +267,7 @@ class GraphicalUserInterface:
 
     def update_task_progress(self, count, total):
         self.lbl_task_progress.configure(text=f"Progress: {count}/{total}")
-        self.lbl_task_progress.update_idletasks()
+        self.lbl_task_progress.update()
 
 
     def _make_tk_image(self, file_path):
