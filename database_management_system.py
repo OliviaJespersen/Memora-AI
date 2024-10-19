@@ -16,6 +16,8 @@ class DatabaseManagementSystem:
 
         with open(self.database_file_path, "r") as database_file:
             self.metadata = json.load(database_file)
+        
+        self.clean()
 
 
     def save_metadata(self):

@@ -29,7 +29,7 @@ def open_directory():
         image_database = database_management_system.DatabaseManagementSystem(database_file_path, True)
     else:
         image_database = database_management_system.DatabaseManagementSystem(database_file_path, False)
-    image_database.clean()
+    #image_database.clean()
     
     active_directory = new_directory
 
