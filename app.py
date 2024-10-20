@@ -26,11 +26,18 @@ def open_directory():
     if not os.path.exists(database_file_path):
         if "No" == user_interface.choice_message_box("A database has not yet been set up for this directory, would you like to create one?"):
             return
-        image_database = database_management_system.DatabaseManagementSystem(database_file_path, True)
+        create_database_file = True
     else:
-        image_database = database_management_system.DatabaseManagementSystem(database_file_path, False)
-    #image_database.clean()
+        create_database_file = False
     
+    try:
+        image_database = database_management_system.DatabaseManagementSystem(database_file_path, create_database_file, False)
+    except Exception as e:
+        if "No" == user_interface.choice_message_box(f"{str(e)}, would you like to clean the database? All your images will still be in the folder and will not be touched."):
+            return
+        else:
+            image_database = database_management_system.DatabaseManagementSystem(database_file_path, create_database_file, True)
+
     active_directory = new_directory
 
     supported_file_list = [file for file in os.listdir(active_directory) if _is_supported_file(file)]
