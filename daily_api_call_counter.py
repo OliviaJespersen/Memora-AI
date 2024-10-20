@@ -7,11 +7,16 @@ class DailyApiCallCounter:
     def __init__(self, storage_file_path):
         self.storage_file_path = storage_file_path
 
-        if os.path.exists(self.storage_file_path):
+        try:
             with open(self.storage_file_path, "r") as storage_file:
                 self.call_data = json.load(storage_file)
-        else:
-            raise Exception("no DailyApiCallCounter storage file")
+        except FileNotFoundError:
+            raise Exception("calls file was not found.")
+        except json.JSONDecodeError:
+            raise Exception("calls file was corrupted.")
+        self.clean()
+
+
 
 
     def save_metadata(self):

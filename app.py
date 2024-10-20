@@ -6,8 +6,8 @@ import database_management_system
 import ai_image_analysis
 import graphical_user_interface
 
-gemini_ai = ai_image_analysis.AiImageAnalysis("config.json")
-call_counter = daily_api_call_counter.DailyApiCallCounter("calls.json")
+gemini_ai = None
+call_counter = None
 active_directory = None
 active_file_name = None
 image_database = None
@@ -134,10 +134,17 @@ def _is_supported_file(file_name):
 
 def main():
     global user_interface
+    global gemini_ai
+    global call_counter
 
-    call_counter.clean()
-    user_interface = graphical_user_interface.GraphicalUserInterface(open_directory, search, show_all, change_active_file, add, remove, add_all, manual_add, reanalyze, open, edit_image_text, edit_tags, call_counter.get_count())
-    user_interface.build_gui("placeholder.png")
+    user_interface = graphical_user_interface.GraphicalUserInterface(open_directory, search, show_all, change_active_file, add, remove, add_all, manual_add, reanalyze, open, edit_image_text, edit_tags)
+    
+    try:
+        gemini_ai = ai_image_analysis.AiImageAnalysis("config.json")
+        call_counter = daily_api_call_counter.DailyApiCallCounter("calls.json")
+        user_interface.build_gui("placeholder.png", call_counter.get_count())
+    except Exception as e:
+        user_interface.setup_error(str(e))
 
 
 if __name__ == "__main__":

@@ -10,7 +10,7 @@ from tkinter.filedialog import askdirectory
 
 
 class GraphicalUserInterface:
-    def __init__(self, open_directory, search, show_all, change_active_file, add, remove, add_all, manual_add, reanalyze, open, edit_image_text, edit_tags, call_count):
+    def __init__(self, open_directory, search, show_all, change_active_file, add, remove, add_all, manual_add, reanalyze, open, edit_image_text, edit_tags):
         self.open_directory_button = open_directory
         self.search_button = search
         self.show_all_button = show_all 
@@ -24,7 +24,7 @@ class GraphicalUserInterface:
         self.edit_image_text_button = edit_image_text
         self.edit_tags_button = edit_tags
 
-        self.call_count = call_count
+        self.call_count = None
         self.active_directory = None
         self.active_file_name = None
         self.active_image_text = None
@@ -33,7 +33,7 @@ class GraphicalUserInterface:
         self.files_not_in_db = None
     
 
-    def build_gui(self, placeholder_image):
+    def build_gui(self, placeholder_image, call_count):
         window = ttk.Window(title="Memora AI", themename="darkly", resizable=(False, False))
 
         frm_left_bar = ttk.Frame(master=window, height=700, width=400)
@@ -76,6 +76,7 @@ class GraphicalUserInterface:
         self.btn_open.grid(column=2, row=1, padx=(8,0), pady=(6,0), sticky=EW)
 
         self.lbl_call_counter = ttk.Label(master=frm_left_bar)
+        self.call_count = call_count
         self._update_call_counter(self.call_count)
         self.lbl_call_counter.pack(side=BOTTOM)
 
@@ -268,6 +269,13 @@ class GraphicalUserInterface:
     def update_task_progress(self, count, total):
         self.lbl_task_progress.configure(text=f"Progress: {count}/{total}")
         self.lbl_task_progress.update()
+
+
+    def setup_error(self, error_message):
+        window = ttk.Window(title="Critical Error", themename="darkly", size=(200,100))
+        label = ttk.Label(master=window, text=f"An error was encountered:\n{error_message}")
+        label.place(relx=0.5, rely=0.5, anchor=CENTER)
+        window.mainloop()
 
 
     def _make_tk_image(self, file_path):
