@@ -6,6 +6,7 @@ import os
 class DailyApiCallCounter:
     def __init__(self, storage_file_path):
         self.storage_file_path = storage_file_path
+        self.today = date.today().strftime("%d/%m/%Y")
 
         try:
             with open(self.storage_file_path, "r") as storage_file:
@@ -17,32 +18,23 @@ class DailyApiCallCounter:
         self.clean()
 
 
-
-
     def save_metadata(self):
         with open(self.storage_file_path, "w") as storage_file:
             json.dump(self.call_data, storage_file, indent=4)
 
 
     def new_call(self):
-        today = date.today().strftime("%d/%m/%Y")
-        if today in self.call_data:
-            self.call_data[today] += 1
-        else:
-            self.call_data[today] = 1
+        self.call_data[self.today] += 1
         self.save_metadata()
 
 
     def get_count(self):
-        today = date.today().strftime("%d/%m/%Y")
-        if not today in self.call_data:
-            self.call_data[today] = 0
-            self.save_metadata()
-        return self.call_data[today]
+        return self.call_data[self.today]
 
 
     def clean(self):
-        today = date.today().strftime("%d/%m/%Y")
-        for day in [day for day in self.call_data if day != today]:
+        for day in [day for day in self.call_data if day != self.today]:
             del self.call_data[day]
+        if not self.today in self.call_data or not isinstance(self.call_data[self.today], int):
+            self.call_data[self.today] = 0
         self.save_metadata()
