@@ -33,8 +33,9 @@ class GraphicalUserInterface:
         self.files_not_in_db = None
     
 
-    def build_gui(self, placeholder_image, call_count):
+    def build_gui(self, placeholder_image, icon, call_count):
         window = ttk.Window(title="Memora AI", themename="darkly", resizable=(False, False))
+        window.iconbitmap(icon)
 
         frm_left_bar = ttk.Frame(master=window, height=700, width=400)
         frm_left_bar.pack_propagate(False)
