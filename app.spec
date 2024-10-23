@@ -17,7 +17,7 @@ elif sys.platform == 'darwin':
 
 
 a = Analysis(
-    ['app.py'],
+    ['main.py'],
     pathex=[],
     binaries=[],
     datas=[

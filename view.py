@@ -9,21 +9,9 @@ from ttkbootstrap.toast import ToastNotification
 from tkinter.filedialog import askdirectory
 
 
-class GraphicalUserInterface:
-    def __init__(self, open_directory, search, show_all, change_active_file, add, remove, add_all, manual_add, reanalyze, open, edit_image_text, edit_tags):
-        self.open_directory_button = open_directory
-        self.search_button = search
-        self.show_all_button = show_all 
-        self.change_active_file_button = change_active_file
-        self.add_button = add
-        self.remove_button = remove
-        self.add_all_button = add_all
-        self.manual_add_button = manual_add
-        self.reanalyze_button = reanalyze
-        self.open_button = open
-        self.edit_image_text_button = edit_image_text
-        self.edit_tags_button = edit_tags
-
+class View:
+    def __init__(self, window):
+        self.window = window
         self.call_count = None
         self.active_directory = None
         self.active_file_name = None
@@ -31,25 +19,25 @@ class GraphicalUserInterface:
         self.active_tags = None
         self.files_in_db = None
         self.files_not_in_db = None
+        self.change_active_file_button = None
     
 
     def build_gui(self, placeholder_image, icon, call_count):
-        window = ttk.Window(title="Memora AI", themename="darkly", resizable=(False, False))
-        window.iconbitmap(icon)
+        self.window.iconbitmap(icon)
 
-        frm_left_bar = ttk.Frame(master=window, height=700, width=400)
+        frm_left_bar = ttk.Frame(master=self.window, height=700, width=400)
         frm_left_bar.pack_propagate(False)
         frm_left_bar.grid(column=0, row=0, padx=(20,6), pady=20, sticky=NSEW)
         
-        frm_right_bar = ttk.Frame(master=window, height=700, width=400)
+        frm_right_bar = ttk.Frame(master=self.window, height=700, width=400)
         frm_right_bar.pack_propagate(False)
         frm_right_bar.grid(column=1, row=0, padx=(6,20), pady=20, sticky=NSEW)
 
         frm_directory = ttk.Frame(master=frm_left_bar, style=SECONDARY)
         frm_directory.pack(fill=X, pady=(0,10))
         
-        btn_directory_open = ttk.Button(master=frm_directory, command=self.open_directory_button, style=SUCCESS, text="Open")
-        btn_directory_open.pack(side=RIGHT)
+        self.btn_open_directory = ttk.Button(master=frm_directory, style=SUCCESS, text="Open")
+        self.btn_open_directory.pack(side=RIGHT)
         
         self.lbl_directory = ttk.Label(master=frm_directory, style=(INVERSE, SECONDARY), text="Open a directory")
         self.lbl_directory.pack(side=LEFT, padx=(6,0))
@@ -58,22 +46,22 @@ class GraphicalUserInterface:
         frm_buttons.columnconfigure([0,1,2], uniform="equal", weight=1)
         frm_buttons.pack(fill=X, side=BOTTOM)
 
-        self.btn_add = ttk.Button(master=frm_buttons, command=self.add_button, state=DISABLED, text="Add")
+        self.btn_add = ttk.Button(master=frm_buttons, state=DISABLED, text="Add")
         self.btn_add.grid(column=0, row=0, padx=(0,8), pady=(10,6), sticky=EW)
         
-        self.btn_manual_add = ttk.Button(master=frm_buttons, command=self.manual_add_button, state=DISABLED, text="Manual Add")
+        self.btn_manual_add = ttk.Button(master=frm_buttons, state=DISABLED, text="Manual Add")
         self.btn_manual_add.grid(column=1, row=0, padx=4, pady=(10,6), sticky=EW)
 
-        self.btn_add_all = ttk.Button(master=frm_buttons, command=self.add_all_button, state=DISABLED, text="Add all")
+        self.btn_add_all = ttk.Button(master=frm_buttons, state=DISABLED, text="Add all")
         self.btn_add_all.grid(column=2, row=0, padx=(8,0), pady=(10,6), sticky=EW)
         
-        self.btn_remove = ttk.Button(master=frm_buttons, command=self.remove_button, state=DISABLED, text="Remove")
+        self.btn_remove = ttk.Button(master=frm_buttons, state=DISABLED, text="Remove")
         self.btn_remove.grid(column=0, row=1, padx=(0,8), pady=(6,0), sticky=EW)
         
-        self.btn_reanalyze = ttk.Button(master=frm_buttons, command=self.reanalyze_button, state=DISABLED, text="Reanalyze")
+        self.btn_reanalyze = ttk.Button(master=frm_buttons, state=DISABLED, text="Reanalyze")
         self.btn_reanalyze.grid(column=1, row=1, padx=4, pady=(6,0), sticky=EW)
         
-        self.btn_open = ttk.Button(master=frm_buttons, command=self.open_button, state=DISABLED, text="Open")
+        self.btn_open = ttk.Button(master=frm_buttons, state=DISABLED, text="Open")
         self.btn_open.grid(column=2, row=1, padx=(8,0), pady=(6,0), sticky=EW)
 
         self.lbl_call_counter = ttk.Label(master=frm_left_bar)
@@ -90,10 +78,10 @@ class GraphicalUserInterface:
         frm_search = ttk.Frame(master=self.frm_file_browser)
         frm_search.pack(fill=X, pady=(10,0))
         
-        self.btn_search = ttk.Button(master=frm_search, command=self.search_button, state=DISABLED, text="Search")
+        self.btn_search = ttk.Button(master=frm_search, state=DISABLED, text="Search")
         self.btn_search.pack(side=LEFT)
         
-        self.btn_show_all = ttk.Button(master=frm_search, command=self.show_all_button, state=DISABLED, text="Show all")
+        self.btn_show_all = ttk.Button(master=frm_search, state=DISABLED, text="Show all")
         self.btn_show_all.pack(side=RIGHT)
         
         self.ent_search = ttk.Entry(master=frm_search)
@@ -118,8 +106,8 @@ class GraphicalUserInterface:
         self.ent_tags.pack(fill=X)
         srb_tags.config(command=self.ent_tags.xview)
         
-        self.btn_tags_edit = ttk.Button(master=frm_tags, command=self.edit_tags_button, state=DISABLED, text="Edit")
-        self.btn_tags_edit.grid(column=1, row=0, sticky=NS)
+        self.btn_edit_tags = ttk.Button(master=frm_tags, state=DISABLED, text="Edit")
+        self.btn_edit_tags.grid(column=1, row=0, sticky=NS)
 
         frm_image_text = ttk.Frame(master=frm_right_bar)
         frm_image_text.columnconfigure(0, weight=1)
@@ -137,8 +125,8 @@ class GraphicalUserInterface:
         self.ent_image_text.pack(fill=X)
         srb_image_text.config(command=self.ent_image_text.xview)
 
-        self.btn_image_text_edit = ttk.Button(master=frm_image_text, command=self.edit_image_text_button, state=DISABLED, text="Edit")
-        self.btn_image_text_edit.grid(column=1, row=0, sticky=NS)
+        self.btn_edit_image_text = ttk.Button(master=frm_image_text, state=DISABLED, text="Edit")
+        self.btn_edit_image_text.grid(column=1, row=0, sticky=NS)
 
         self.lbl_image_name = ttk.Label(master=frm_right_bar, text="Select an image to get started!")
         self.lbl_image_name.pack(pady=(0,10))
@@ -146,14 +134,60 @@ class GraphicalUserInterface:
         self.lbl_image = ttk.Label(master=frm_right_bar, image=self._make_tk_image(placeholder_image))
         self.lbl_image.pack()
 
-        window.mainloop()
+
+    def bind_open_directory_button(self, callback):
+        self.btn_open_directory.config(command=callback)
+
+    
+    def bind_add_button(self, callback):
+        self.btn_add.config(command=callback)
+
+    
+    def bind_manual_add_button(self, callback):
+        self.btn_manual_add.config(command=callback)
+
+    
+    def bind_add_all_button(self, callback):
+        self.btn_add_all.config(command=callback)
+
+    
+    def bind_remove_button(self, callback):
+        self.btn_remove.config(command=callback)
+
+
+    def bind_reanalyze_button(self, callback):
+        self.btn_reanalyze.config(command=callback)
+
+
+    def bind_open_button(self, callback):
+        self.btn_open.config(command=callback)
+
+
+    def bind_search_button(self, callback):
+        self.btn_search.config(command=callback)
+
+
+    def bind_show_all_button(self, callback):
+        self.btn_show_all.config(command=callback)
+
+
+    def bind_edit_tags_button(self, callback):
+        self.btn_edit_tags.config(command=callback)
+
+
+    def bind_edit_image_text_button(self, callback):
+        self.btn_edit_image_text.config(command=callback)
+
+
+    def bind_change_active_file_button(self, callback):
+        self.change_active_file_button = callback
 
 
     def open_directory(self, active_directory, files_in_db, files_not_in_db):
         self.active_directory = active_directory
-        self.lbl_directory.configure(text=os.path.basename(self.active_directory))
+        self.lbl_directory.config(text=os.path.basename(self.active_directory))
         for button in [self.btn_add_all, self.btn_search, self.btn_show_all]:
-            button.configure(state=ACTIVE)
+            button.config(state=ACTIVE)
 
         self.files_in_db = files_in_db
         self.files_not_in_db = files_not_in_db
@@ -174,17 +208,17 @@ class GraphicalUserInterface:
         self.active_image_text = image_text
         self.active_tags = tags
 
-        self.lbl_image.configure(image=self._make_tk_image(self.active_directory+"/"+self.active_file_name))
+        self.lbl_image.config(image=self._make_tk_image(self.active_directory+"/"+self.active_file_name))
         for entry in [self.ent_image_text, self.ent_tags]:
             entry.delete(0, END)
         self.ent_image_text.insert(END, self.active_image_text)
         self.ent_tags.insert(END, self.active_tags)
-        self.lbl_image_name.configure(text=self.active_file_name)
+        self.lbl_image_name.config(text=self.active_file_name)
 
         states = [ACTIVE, DISABLED, DISABLED, ACTIVE, ACTIVE, ACTIVE, ACTIVE] if self.active_file_name in self.files_in_db else [ACTIVE, ACTIVE, ACTIVE, DISABLED, DISABLED, DISABLED, DISABLED]
-        buttons = [self.btn_open, self.btn_manual_add, self.btn_add, self.btn_remove, self.btn_reanalyze, self.btn_image_text_edit, self.btn_tags_edit]
+        buttons = [self.btn_open, self.btn_manual_add, self.btn_add, self.btn_remove, self.btn_reanalyze, self.btn_edit_image_text, self.btn_edit_tags]
         for i in range(len(buttons)):
-            buttons[i].configure(state=states[i])
+            buttons[i].config(state=states[i])
 
 
     def add(self, image_text, tags):
@@ -203,14 +237,14 @@ class GraphicalUserInterface:
         self._update_file_list()
 
 
-    def add_all(self, new_file_names, image_text, tags, call_count):
+    def add_all(self, new_file_names, image_text, tags, calls):
         self.files_in_db += new_file_names
         self.files_not_in_db = [file_name for file_name in self.files_not_in_db if not file_name in new_file_names]
         self.change_active_file(self.active_file_name, image_text, tags)
         self._update_file_list()
 
-        self.lbl_task_progress.configure(text="No task in progress")
-        self.call_count = call_count
+        self.lbl_task_progress.config(text="No task in progress")
+        self.call_count += calls
         self._update_call_counter(self.call_count)
 
 
@@ -268,15 +302,14 @@ class GraphicalUserInterface:
 
 
     def update_task_progress(self, count, total):
-        self.lbl_task_progress.configure(text=f"Progress: {count}/{total}")
+        self.lbl_task_progress.config(text=f"Progress: {count}/{total}")
         self.lbl_task_progress.update()
 
 
     def setup_error(self, error_message):
-        window = ttk.Window(title="Critical Error", themename="darkly", size=(200,100))
-        label = ttk.Label(master=window, text=f"An error was encountered:\n{error_message}")
+        label = ttk.Label(master=self.window, text=f"An error was encountered:\n{error_message}")
         label.place(relx=0.5, rely=0.5, anchor=CENTER)
-        window.mainloop()
+        self.window.mainloop()
 
 
     def _make_tk_image(self, file_path):
@@ -300,4 +333,4 @@ class GraphicalUserInterface:
 
 
     def _update_call_counter(self, count):
-        self.lbl_call_counter.configure(text=f"API calls today: {count}/1500")
+        self.lbl_call_counter.config(text=f"API calls today: {count}/1500")
