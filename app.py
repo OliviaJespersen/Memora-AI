@@ -139,6 +139,15 @@ def _is_supported_file(file_name):
     return os.path.splitext(file_name)[1].lower() in ['.jpeg', '.jpg', '.png', '.webp']
 
 
+def _resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except AttributeError:
+        base_path = os.path.abspath(".")
+    
+    return os.path.join(base_path, relative_path)
+
+
 def main():
     global user_interface
     global gemini_ai
