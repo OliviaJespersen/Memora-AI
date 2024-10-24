@@ -29,7 +29,7 @@ class Model:
 
     def add_entry(self):
         self.call_counter.new_call()
-        ai_description = self.gemini_ai.generate_description(self.active_directory+"/"+self.active_file_name)
+        ai_description = self._generate_description(self.active_file_name)
         self.image_database.add_entry(self.active_file_name, ai_description)
 
 
@@ -50,7 +50,7 @@ class Model:
                 update_task_progress(file_counter, len(cut_list))
                 try:
                     self.call_counter.new_call()
-                    self.image_database.add_entry(file_name, self.gemini_ai.generate_description(self.active_directory+"/"+file_name))
+                    self.image_database.add_entry(file_name, self._generate_description(file_name))
                     good_files += [file_name]
                 except ValueError as e:
                     bad_files += [f"{file_name}: {str(e)}"]
@@ -69,7 +69,7 @@ class Model:
 
     def reanalyze_entry(self):
         self.call_counter.new_call()
-        self.image_database.reanalyze_entry(self.active_file_name, self.gemini_ai.generate_description(self.active_directory+"/"+self.active_file_name))
+        self.image_database.reanalyze_entry(self.active_file_name, self._generate_description(self.active_file_name))
 
 
     def edit_image_text(self, new_image_text):
@@ -115,3 +115,6 @@ class Model:
     def _file_is_supported(self, file_name):
         return os.path.splitext(file_name)[1].lower() in ['.jpeg', '.jpg', '.png', '.webp']
     
+
+    def _generate_description(self, file_name):
+        return self.gemini_ai.generate_description(self.active_directory+"/"+file_name)
