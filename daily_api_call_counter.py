@@ -12,9 +12,9 @@ class DailyApiCallCounter:
             with open(self.storage_file_path, "r") as storage_file:
                 self.call_data = json.load(storage_file)
         except FileNotFoundError:
-            raise Exception("calls file was not found.")
+            raise Exception("Calls file was not found")
         except json.JSONDecodeError:
-            raise Exception("calls file was corrupted.")
+            raise Exception("Calls file was corrupted")
         self.clean()
 
 

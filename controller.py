@@ -10,6 +10,7 @@ class Controller:
         self.view.bind_open_directory_button(self.on_open_directory_clicked)
         self.view.bind_search_button(self.on_search_clicked)
         self.view.bind_show_all_button(self.on_show_all_clicked)
+        self.view.bind_change_active_file_button(self.on_change_active_file_clicked)
         self.view.bind_add_button(self.on_add_clicked)
         self.view.bind_manual_add_button(self.on_manual_add_clicked)
         self.view.bind_add_all_button(self.on_add_all_clicked)
@@ -18,7 +19,6 @@ class Controller:
         self.view.bind_open_button(self.on_open_clicked)
         self.view.bind_edit_image_text_button(self.on_edit_image_text_clicked)
         self.view.bind_edit_tags_button(self.on_edit_tags_clicked)
-        self.view.bind_change_active_file_button(self.on_change_active_file_clicked)
 
 
     def on_open_directory_clicked(self):
@@ -35,18 +35,16 @@ class Controller:
             create_database_file = False
 
         try:
-            self.model.open_database(create_database_file, False)
+            self.model.open_database(create_database_file)
         except Exception as e:
-            if "No" == self.view.choice_message_box(f"{str(e)}, would you like to clean the database? All your images will still be in the folder and will not be touched."):
-                return
-            else:
-                self.model.open_database(create_database_file, True)
+            self.view.error_message_box(str(e))
+            
 
         active_directory = self.model.get_active_directory()
         files_in_database = self.model.get_files_in_database()
         files_not_in_database = self.model.get_files_not_in_database()
 
-        self.view.open_directory(self, active_directory, files_in_database, files_not_in_database)
+        self.view.open_directory(active_directory, files_in_database, files_not_in_database)
 
     
     def on_search_clicked(self):
@@ -86,8 +84,8 @@ class Controller:
     def on_add_all_clicked(self):
         try:
             returns = self.model.add_all(self.view.update_task_progress)
-            bad_files = returns[0]
-            good_files = returns[1]
+            good_files = returns[0]
+            bad_files = returns[1]
             if bad_files != []:
                 self.view.error_message_box("The following files failed:\n" + "\n".join(bad_files))
         except Exception as e:

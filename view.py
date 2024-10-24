@@ -251,6 +251,8 @@ class View:
     def manual_add(self):
         self.files_in_db += [self.active_file_name]
         self.files_not_in_db.remove(self.active_file_name)
+        self.active_image_text = self.get_new_image_text()
+        self.active_tags = self.get_new_tags()
         self.change_active_file(self.active_file_name, self.active_image_text, self.active_tags)
         self._update_file_list()
 

@@ -14,9 +14,9 @@ class Model:
         self.image_database: DatabaseManagementSystem = None
 
 
-    def open_database(self, create_database_file, clean_database):
+    def open_database(self, create_database_file):
         database_file_path = self.active_directory+"/"+"database.json"
-        self.image_database = DatabaseManagementSystem(database_file_path, create_database_file, clean_database)
+        self.image_database = DatabaseManagementSystem(database_file_path, create_database_file)
 
 
     def database_file_exists(self):
@@ -60,7 +60,7 @@ class Model:
             if chunk_nr != len(chunk_list) - 1 and end_time - start_time < 60:
                 time.sleep(60 - (end_time - start_time))
 
-        return (bad_files, bad_files)
+        return (good_files, bad_files)
 
 
     def remove_entry(self):
@@ -93,11 +93,11 @@ class Model:
 
 
     def get_files_in_database(self):
-        return [file_name for file_name in self._get_supported_file_list if self.image_database.in_database(file_name)]
+        return [file_name for file_name in self._get_supported_file_list() if self.image_database.in_database(file_name)]
     
 
     def get_files_not_in_database(self):
-        return [file_name for file_name in self._get_supported_file_list if not self.image_database.in_database(file_name)]
+        return [file_name for file_name in self._get_supported_file_list() if not self.image_database.in_database(file_name)]
 
 
     def get_image_text(self):

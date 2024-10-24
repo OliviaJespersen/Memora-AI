@@ -5,7 +5,7 @@ import search_engine
 
 
 class DatabaseManagementSystem:
-    def __init__(self, database_file_path, create_database_file, clean_database):
+    def __init__(self, database_file_path, create_database_file):
         self.database_file_path = database_file_path
         self.active_directory = os.path.dirname(self.database_file_path)
         self.search_engine = search_engine.SearchEngine(70)
@@ -13,16 +13,9 @@ class DatabaseManagementSystem:
         if create_database_file:
             self.metadata = {}
             self.save_metadata()
-
-        with open(self.database_file_path, "r") as database_file:
-            self.metadata = json.load(database_file)
-
-        if clean_database:
-            self.clean()
-
-        for image in self.metadata:
-            if not all(key in self.metadata[image] for key in ["image_text", "tags"]) or not image in os.listdir(self.active_directory):
-                raise Exception("Database is corrupt")
+        else:
+            with open(self.database_file_path, "r") as database_file:
+                self.metadata = json.load(database_file)
 
 
     def save_metadata(self):
@@ -76,9 +69,3 @@ class DatabaseManagementSystem:
 
     def search_database(self, search_query):
         return self.search_engine.search(search_query, self.metadata)
-    
-
-    def clean(self):
-        for file_name in [file_name for file_name in self.metadata if not all(key in self.metadata[file_name] for key in ["image_text", "tags"]) or not file_name in os.listdir(self.active_directory)]:
-            del self.metadata[file_name]
-        self.save_metadata()

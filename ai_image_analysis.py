@@ -11,15 +11,15 @@ class AiImageAnalysis:
             with open(config_file_path, "r") as config_file:
                 config_data = json.load(config_file)
         except FileNotFoundError:
-            raise Exception("config file was not found.")
+            raise Exception("Config file was not found")
         except json.JSONDecodeError:
-            raise Exception("config file was corrupted.")
-        if not "api_key" in config_data or not config_data["api_key"]:
-            raise Exception("API key was not set in config file.")
+            raise Exception("Config file was corrupted")
+        if not "api_key" in config_data or not config_data["api_key"] or config_data["api_key"] == "Your Gemini API key goes here":
+            raise Exception("API key was not set in config file")
         try:
             gemini.configure(api_key=config_data["api_key"])
         except:
-            raise Exception("Gemini failed to set the API key.")
+            raise Exception("Gemini failed to set the API key")
 
     
     def generate_description(self, file_path):
@@ -50,4 +50,3 @@ class AiImageAnalysis:
             error_message = response.replace("\n", " ")
             raise ValueError(f"The AI gave an unusable response:\n{error_message}")
         return [string.strip() for string in response.split("|")]
-

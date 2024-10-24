@@ -27,7 +27,7 @@ def main():
         call_counter = DailyApiCallCounter(_resource_path("resources/calls.json"))
         view.build_gui(_resource_path("resources/placeholder.png"), _resource_path("resources/boykisser.ico"), call_counter.get_count())
         model = Model(gemini_ai, call_counter)
-        controller = Controller(model, view)
+        Controller(model, view)
     except Exception as e:
         view.setup_error(str(e))
 
