@@ -308,12 +308,6 @@ class View:
         self.lbl_task_progress.update()
 
 
-    def setup_error(self, error_message):
-        label = ttk.Label(master=self.window, text=f"An error was encountered:\n{error_message}")
-        label.place(relx=0.5, rely=0.5, anchor=CENTER)
-        self.window.mainloop()
-
-
     def _make_tk_image(self, file_path):
         global tk_image
 

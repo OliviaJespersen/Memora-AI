@@ -29,7 +29,8 @@ def main():
         model = Model(gemini_ai, call_counter)
         Controller(model, view)
     except Exception as e:
-        view.setup_error(str(e))
+        view.error_message_box(str(e))
+        quit()
 
     window.mainloop()
 
