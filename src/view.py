@@ -22,9 +22,7 @@ class View:
         self.change_active_file_button = None
     
 
-    def build_gui(self, placeholder_image, icon, call_count):
-        self.window.iconbitmap(icon)
-
+    def build_gui(self, placeholder_image, call_count):
         frm_left_bar = ttk.Frame(master=self.window, height=700, width=400)
         frm_left_bar.pack_propagate(False)
         frm_left_bar.grid(column=0, row=0, padx=(20,6), pady=20, sticky=NSEW)

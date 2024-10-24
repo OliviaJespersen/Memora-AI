@@ -21,11 +21,14 @@ def _resource_path(relative_path):
 def main():
     window = ttk.Window(title="Memora AI", themename="darkly", resizable=(False, False))
     view = View(window)
+    icon = _resource_path("resources/boykisser.ico")
+    window.iconbitmap(bitmap=icon)
+    window.iconbitmap(default=icon)
 
     try:
         gemini_ai = AiImageAnalysis(_resource_path("config/config.json"))
         call_counter = DailyApiCallCounter(_resource_path("data/calls.json"))
-        view.build_gui(_resource_path("resources/placeholder.png"), _resource_path("resources/boykisser.ico"), call_counter.get_count())
+        view.build_gui(_resource_path("resources/placeholder.png"), call_counter.get_count())
         model = Model(gemini_ai, call_counter)
         Controller(model, view)
     except Exception as e:
