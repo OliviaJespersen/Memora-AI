@@ -196,7 +196,7 @@ class View:
 
 
     def search(self, file_list):
-        self._update_file_list(file_list)
+        self._show_files(file_list, [])
 
 
     def show_all(self):
@@ -322,12 +322,16 @@ class View:
         return tk_image
 
 
-    def _update_file_list(self, file_list=None):
+    def _update_file_list(self):
+        self._show_files(self.files_in_db, self.files_not_in_db)
+
+
+    def _show_files(self, files_in_db, files_not_in_db):
         for widget in self.frm_file_list.winfo_children():
             widget.destroy()
 
-        for file_name in (sorted(self.files_in_db) + sorted(self.files_not_in_db) if not file_list else file_list):
-            label = ttk.Label(master=self.frm_file_list, text=file_name, bootstyle=SUCCESS if file_name in self.files_in_db else SECONDARY)
+        for file_name in (sorted(files_in_db) + sorted(files_not_in_db)):
+            label = ttk.Label(master=self.frm_file_list, text=file_name, bootstyle=SUCCESS if file_name in files_in_db else SECONDARY)
             label.pack(anchor=W)
             label.bind("<Button-1>", lambda event, new_file=file_name: self.change_active_file_button(new_file))
             separator = ttk.Separator(master=self.frm_file_list)
