@@ -23,8 +23,8 @@ def main():
     view = View(window)
 
     try:
-        gemini_ai = AiImageAnalysis(_resource_path("config.json"))
-        call_counter = DailyApiCallCounter(_resource_path("resources/calls.json"))
+        gemini_ai = AiImageAnalysis(_resource_path("config/config.json"))
+        call_counter = DailyApiCallCounter(_resource_path("data/calls.json"))
         view.build_gui(_resource_path("resources/placeholder.png"), _resource_path("resources/boykisser.ico"), call_counter.get_count())
         model = Model(gemini_ai, call_counter)
         Controller(model, view)

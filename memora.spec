@@ -17,12 +17,13 @@ elif sys.platform == 'darwin':
 
 
 a = Analysis(
-    ['main.py'],
+    ['src/main.py'],
     pathex=[],
     binaries=[],
     datas=[
         ("resources", "resources"),
-        ("config.json", ".")],
+        ("config", "config"),
+        ("data", "data")],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
