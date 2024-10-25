@@ -1,5 +1,4 @@
 import ast
-import json
 
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 import google.generativeai as gemini
@@ -7,18 +6,9 @@ import PIL.Image
 
 
 class AiImageAnalysis:
-    def __init__(self, config_file_path):
+    def __init__(self, api_key):
         try:
-            with open(config_file_path, "r") as config_file:
-                config_data = json.load(config_file)
-        except FileNotFoundError:
-            raise Exception("Config file was not found")
-        except json.JSONDecodeError:
-            raise Exception("Config file was corrupted")
-        if not "api_key" in config_data or not config_data["api_key"] or config_data["api_key"] == "Your Gemini API key goes here":
-            raise Exception("API key was not set in config file")
-        try:
-            gemini.configure(api_key=config_data["api_key"])
+            gemini.configure(api_key=api_key)
         except:
             raise Exception("Gemini failed to set the API key")
 

@@ -1,3 +1,4 @@
 {
-    "api_key": "Your Gemini API key goes here"
+    "api_key": "Your Gemini API key goes here",
+    "theme": "darkly"
 }
