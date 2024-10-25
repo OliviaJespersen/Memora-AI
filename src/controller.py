@@ -41,31 +41,31 @@ class Controller:
         except Exception as e:
             self.view.error_message_box(str(e))
 
-        self.update_view(update_directory=True, update_directory_buttons=True, update_file_list=True)
+        self.update_view(interface=True, file_list=True)
 
     
     def on_search_clicked(self):
         query = self.view.get_query()
         result_list = self.model.search_database(query)
 
-        self.update_view(show_files=True, file_list=(result_list, []))
+        self.update_view(file_list=True, search=True, result_list=(result_list, []))
 
 
     def on_show_all_clicked(self):
-        self.update_view(update_file_list=True)
+        self.update_view(file_list=True)
 
 
     def on_change_active_file_clicked(self, new_file_name):
         self.model.set_active_file_name(new_file_name)
 
-        self.update_view(update_file_buttons=True, update_image=True, update_image_text=True, update_tags=True)
+        self.update_view(file=True)
 
 
     def on_add_clicked(self):
         try:
             self.model.add_entry()
 
-            self.update_view(update_file_list=True, update_call_count=True, update_file_buttons=True, update_image_text=True, update_tags=True)
+            self.update_view(interface=True, file=True, file_list=True)
         except Exception as e:
             self.view.error_message_box(str(e))
 
@@ -75,7 +75,7 @@ class Controller:
         tags = self.view.get_new_tags()
         self.model.manual_add_entry(image_text, tags)
 
-        self.update_view(update_file_list=True, update_file_buttons=True)
+        self.update_view(file=True, file_list=True)
 
 
     def on_add_all_clicked(self):
@@ -88,21 +88,21 @@ class Controller:
 
 
         if not self.model.get_active_file_name() == None:
-            self.update_view(update_file_buttons=True, update_image_text=True, update_tags=True)
-        self.update_view(update_file_list=True, reset_task_progress=True, update_call_count=True)
+            self.update_view(file=True)
+        self.update_view(interface=True, file_list=True)
 
 
     def on_remove_clicked(self):
         self.model.remove_entry()
 
-        self.update_view(update_file_list=True, update_file_buttons=True, update_image_text=True, update_tags=True)
+        self.update_view(file=True, file_list=True)
 
     
     def on_reanalyze_clicked(self):
         try:
             self.model.reanalyze_entry()
 
-            self.update_view(update_call_count=True, update_image_text=True, update_tags=True)
+            self.update_view(interface=True, file=True)
         except Exception as e:
             self.view.error_message_box(str(e))
 
@@ -126,31 +126,28 @@ class Controller:
         self.view.toast_message_box("Saved successfully")
 
 
-    def update_view(self, update_directory=False, update_directory_buttons=False, update_file_list=False, show_files=False, file_list=([], []), reset_task_progress=False, update_call_count=False, update_file_buttons=False, update_image=False, update_image_text=False, update_tags=False):
-        if update_directory:
+    def update_view(self, interface=False, file=False, file_list=False, search=False, result_list=([], [])):
+        if interface:
             active_directory = self.model.get_active_directory()
             self.view.set_directory_name(os.path.basename(active_directory))
-        if update_directory_buttons:
             self.view.update_buttons("open_database")
-        if update_file_list:
-            files_in_database = self.model.get_files_in_database()
-            files_not_in_database = self.model.get_files_not_in_database()
-            self.view.show_files(files_in_database, files_not_in_database)
-        if show_files:
-            self.view.show_files(file_list[0], file_list[1])
-        if reset_task_progress:
             self.view.reset_task_progress()
-        if update_call_count:
             self.view.update_call_counter(self.model.get_call_count())
-        if update_file_buttons:
+
+        if file:
             in_database = self.model.get_active_file_name() in self.model.get_files_in_database()
             self.view.update_buttons("in_database" if in_database else "not_in_database")
-        if update_image:
             image_path = self.model.get_active_directory()+"/"+self.model.get_active_file_name()
             self.view.set_image(image_path, self.model.get_active_file_name())
-        if update_image_text:
             image_text = self.model.get_image_text()
             self.view.set_image_text(image_text)
-        if update_tags:
             tags = self.model.get_tags()
             self.view.set_tags(tags)
+
+        if file_list:
+            if search: 
+                self.view.show_files(result_list[0], result_list[1])
+            else:
+                files_in_database = self.model.get_files_in_database()
+                files_not_in_database = self.model.get_files_not_in_database()
+                self.view.show_files(files_in_database, files_not_in_database)
