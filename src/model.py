@@ -41,7 +41,6 @@ class Model:
         cut_list = [file for file in os.listdir(self.active_directory) if self._file_is_supported(file) and not self.image_database.in_database(file)][:1500 - self.call_counter.get_count()]
         chunk_list = [cut_list[i:i + 15] for i in range(0, len(cut_list), 15)]
         bad_files = []
-        good_files = []
         file_counter = 0
 
         for chunk_nr in range(len(chunk_list)):
@@ -51,7 +50,6 @@ class Model:
                 try:
                     self.call_counter.new_call()
                     self.image_database.add_entry(file_name, self._generate_description(file_name))
-                    good_files += [file_name]
                 except ValueError as e:
                     bad_files += [f"{file_name}: {str(e)}"]
                 file_counter += 1
@@ -60,7 +58,7 @@ class Model:
             if chunk_nr != len(chunk_list) - 1 and end_time - start_time < 60:
                 time.sleep(60 - (end_time - start_time))
 
-        return (good_files, bad_files)
+        return bad_files
 
 
     def remove_entry(self):
@@ -83,13 +81,17 @@ class Model:
     def get_active_directory(self):
         return self.active_directory
 
-
-    def set_active_file_name(self, new_file_name):
-        self.active_file_name = new_file_name
-
     
     def set_active_directory(self, new_directory):
         self.active_directory = new_directory
+
+
+    def get_active_file_name(self):
+        return self.active_file_name
+
+
+    def set_active_file_name(self, new_file_name):
+        self.active_file_name = new_file_name
 
 
     def get_files_in_database(self):
@@ -106,6 +108,10 @@ class Model:
 
     def get_tags(self):
         return self.image_database.get_tags(self.active_file_name)
+
+
+    def get_call_count(self):
+        return self.call_counter.get_count()
 
 
     def _get_supported_file_list(self):

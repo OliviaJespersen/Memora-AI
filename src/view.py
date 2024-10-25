@@ -1,5 +1,3 @@
-import os
-
 from PIL import Image, ImageTk
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
@@ -12,14 +10,7 @@ from tkinter.filedialog import askdirectory
 class View:
     def __init__(self, window):
         self.window = window
-        self.call_count = None
-        self.active_directory = None
-        self.active_file_name = None
-        self.active_image_text = None
-        self.active_tags = None
-        self.files_in_db = None
-        self.files_not_in_db = None
-        self.change_active_file_button = None
+        self.change_active_file_command = None
     
 
     def build_gui(self, placeholder_image, call_count):
@@ -64,7 +55,7 @@ class View:
 
         self.lbl_call_counter = ttk.Label(master=frm_left_bar)
         self.call_count = call_count
-        self._update_call_counter(self.call_count)
+        self.update_call_counter(self.call_count)
         self.lbl_call_counter.pack(side=BOTTOM)
 
         self.lbl_task_progress = ttk.Label(master=frm_left_bar, text="No task in progress")
@@ -126,151 +117,98 @@ class View:
         self.btn_edit_image_text = ttk.Button(master=frm_image_text, state=DISABLED, text="Edit")
         self.btn_edit_image_text.grid(column=1, row=0, sticky=NS)
 
-        self.lbl_image_name = ttk.Label(master=frm_right_bar, text="Select an image to get started!")
+        self.lbl_image_name = ttk.Label(master=frm_right_bar)
         self.lbl_image_name.pack(pady=(0,10))
 
-        self.lbl_image = ttk.Label(master=frm_right_bar, image=self._make_tk_image(placeholder_image))
+        self.lbl_image = ttk.Label(master=frm_right_bar)
+        self.set_image(placeholder_image, "Select an image to get started!")
         self.lbl_image.pack()
 
 
-    def bind_open_directory_button(self, callback):
-        self.btn_open_directory.config(command=callback)
+    def bind_buttons(self, button_name, command):
+        buttons = {
+            "open_directory": self.btn_open_directory,
+            "search": self.btn_search,
+            "show_all": self.btn_show_all,
+            "add": self.btn_add,
+            "manual_add": self.btn_manual_add,
+            "add_all": self.btn_add_all,
+            "remove": self.btn_remove,
+            "reanalyze": self.btn_reanalyze,
+            "open": self.btn_open,
+            "edit_image_text": self.btn_edit_image_text,
+            "edit_tags": self.btn_edit_tags
+        }
+        if button_name in ["change_active_file"]:
+            buttons[button_name] = command
+        else:
+            buttons[button_name].config(command=command)
+
+
+    def set_file_change_command(self, command):
+        self.change_active_file_command = command
+
+
+    def set_directory_name(self, directory_name):
+        self.lbl_directory.config(text=directory_name)
+
+
+    def update_buttons(self, state):
+        if state == "open_database":
+            for button in [self.btn_add_all, self.btn_search, self.btn_show_all]:
+                button.config(state=ACTIVE)
+        else:
+            if state == "in_database":
+                states = [ACTIVE, DISABLED, DISABLED, ACTIVE, ACTIVE, ACTIVE, ACTIVE]
+            else:
+                states = [ACTIVE, ACTIVE, ACTIVE, DISABLED, DISABLED, DISABLED, DISABLED]
+            buttons = [self.btn_open, self.btn_manual_add, self.btn_add, self.btn_remove, self.btn_reanalyze, self.btn_edit_image_text, self.btn_edit_tags]
+            for i in range(len(buttons)):
+                buttons[i].config(state=states[i])
+
+
+    def show_files(self, files_in_db, files_not_in_db):
+        for widget in self.frm_file_list.winfo_children():
+            widget.destroy()
+
+        for file_name in (sorted(files_in_db) + sorted(files_not_in_db)):
+            label = ttk.Label(master=self.frm_file_list, text=file_name, bootstyle=SUCCESS if file_name in files_in_db else SECONDARY)
+            label.pack(anchor=W)
+            label.bind("<Button-1>", lambda event, new_file=file_name: self.change_active_file_command(new_file))
+            separator = ttk.Separator(master=self.frm_file_list)
+            separator.pack(fill=X)
+
+
+    def set_image(self, image_path, image_name):
+        global tk_image
+
+        image = Image.open(image_path)
+        tk_image = ImageTk.PhotoImage(image.resize((400,int((image.height / image.width * 400)))))
+
+        self.lbl_image.config(image=tk_image)
+        self.lbl_image_name.config(text=image_name)
+
+
+    def set_image_text(self, image_text):
+        self.ent_image_text.delete(0, END)
+        self.ent_image_text.insert(END, image_text)
+
+
+    def set_tags(self, tags):
+        self.ent_tags.delete(0, END)
+        self.ent_tags.insert(END, tags)
+
+
+    def update_call_counter(self, count):
+        self.lbl_call_counter.config(text=f"API calls today: {count}/1500")
 
     
-    def bind_add_button(self, callback):
-        self.btn_add.config(command=callback)
-
-    
-    def bind_manual_add_button(self, callback):
-        self.btn_manual_add.config(command=callback)
-
-    
-    def bind_add_all_button(self, callback):
-        self.btn_add_all.config(command=callback)
-
-    
-    def bind_remove_button(self, callback):
-        self.btn_remove.config(command=callback)
-
-
-    def bind_reanalyze_button(self, callback):
-        self.btn_reanalyze.config(command=callback)
-
-
-    def bind_open_button(self, callback):
-        self.btn_open.config(command=callback)
-
-
-    def bind_search_button(self, callback):
-        self.btn_search.config(command=callback)
-
-
-    def bind_show_all_button(self, callback):
-        self.btn_show_all.config(command=callback)
-
-
-    def bind_edit_tags_button(self, callback):
-        self.btn_edit_tags.config(command=callback)
-
-
-    def bind_edit_image_text_button(self, callback):
-        self.btn_edit_image_text.config(command=callback)
-
-
-    def bind_change_active_file_button(self, callback):
-        self.change_active_file_button = callback
-
-
-    def open_directory(self, active_directory, files_in_db, files_not_in_db):
-        self.active_directory = active_directory
-        self.lbl_directory.config(text=os.path.basename(self.active_directory))
-        for button in [self.btn_add_all, self.btn_search, self.btn_show_all]:
-            button.config(state=ACTIVE)
-
-        self.files_in_db = files_in_db
-        self.files_not_in_db = files_not_in_db
-
-        self._update_file_list()
-
-
-    def search(self, file_list):
-        self._show_files(file_list, [])
-
-
-    def show_all(self):
-        self._update_file_list()
-
-
-    def change_active_file(self, file_name, image_text, tags):
-        self.active_file_name = file_name
-        self.active_image_text = image_text
-        self.active_tags = tags
-
-        self.lbl_image.config(image=self._make_tk_image(self.active_directory+"/"+self.active_file_name))
-        for entry in [self.ent_image_text, self.ent_tags]:
-            entry.delete(0, END)
-        self.ent_image_text.insert(END, self.active_image_text)
-        self.ent_tags.insert(END, self.active_tags)
-        self.lbl_image_name.config(text=self.active_file_name)
-
-        states = [ACTIVE, DISABLED, DISABLED, ACTIVE, ACTIVE, ACTIVE, ACTIVE] if self.active_file_name in self.files_in_db else [ACTIVE, ACTIVE, ACTIVE, DISABLED, DISABLED, DISABLED, DISABLED]
-        buttons = [self.btn_open, self.btn_manual_add, self.btn_add, self.btn_remove, self.btn_reanalyze, self.btn_edit_image_text, self.btn_edit_tags]
-        for i in range(len(buttons)):
-            buttons[i].config(state=states[i])
-
-
-    def add(self, image_text, tags):
-        self.files_in_db += [self.active_file_name]
-        self.files_not_in_db.remove(self.active_file_name)
-        self.change_active_file(self.active_file_name, image_text, tags)
-        self._update_file_list()
-        self.call_count += 1
-        self._update_call_counter(self.call_count)
-
-
-    def remove(self, image_text, tags):
-        self.files_not_in_db += [self.active_file_name]
-        self.files_in_db.remove(self.active_file_name)
-        self.change_active_file(self.active_file_name, image_text, tags)
-        self._update_file_list()
-
-
-    def add_all(self, new_file_names, image_text, tags, calls):
-        self.files_in_db += new_file_names
-        self.files_not_in_db = [file_name for file_name in self.files_not_in_db if not file_name in new_file_names]
-        self.change_active_file(self.active_file_name, image_text, tags)
-        self._update_file_list()
-
+    def reset_task_progress(self):
         self.lbl_task_progress.config(text="No task in progress")
-        self.call_count += calls
-        self._update_call_counter(self.call_count)
 
 
-    def manual_add(self):
-        self.files_in_db += [self.active_file_name]
-        self.files_not_in_db.remove(self.active_file_name)
-        self.active_image_text = self.get_new_image_text()
-        self.active_tags = self.get_new_tags()
-        self.change_active_file(self.active_file_name, self.active_image_text, self.active_tags)
-        self._update_file_list()
-
-
-    def reanalyze(self, image_text, tags):
-        self.change_active_file(self.active_file_name, image_text, tags)
-        self.call_count += 1
-        self._update_call_counter(self.call_count)
-
-
-    def open(self):
-        Image.open(self.active_directory+"/"+self.active_file_name).show()
-
-
-    def edit_image_text(self):
-        ToastNotification(title="Saved successfully", message="The edit made to the image-text were successfully saved", duration=5000, bootstyle=SUCCESS, alert=True, icon=":3").show_toast()
-
-
-    def edit_tags(self):
-        ToastNotification(title="Saved successfully", message="The edit made to the image tags were successfully saved", duration=5000, bootstyle=SUCCESS, alert=True, icon=":3").show_toast()
+    def open(self, image_path):
+        Image.open(image_path).show()
 
 
     def get_new_image_text(self):
@@ -283,6 +221,10 @@ class View:
 
     def get_query(self):
         return self.ent_search.get()
+
+
+    def toast_message_box(self, message):
+        ToastNotification(title="Memora AI", message=message, duration=5000, bootstyle=SUCCESS, alert=True, icon=":3").show_toast()
 
 
     def info_message_box(self, message):
@@ -304,31 +246,3 @@ class View:
     def update_task_progress(self, count, total):
         self.lbl_task_progress.config(text=f"Progress: {count}/{total}")
         self.lbl_task_progress.update()
-
-
-    def _make_tk_image(self, file_path):
-        global tk_image
-
-        image = Image.open(file_path)
-        tk_image = ImageTk.PhotoImage(image.resize((400,int((image.height / image.width * 400)))))
-        return tk_image
-
-
-    def _update_file_list(self):
-        self._show_files(self.files_in_db, self.files_not_in_db)
-
-
-    def _show_files(self, files_in_db, files_not_in_db):
-        for widget in self.frm_file_list.winfo_children():
-            widget.destroy()
-
-        for file_name in (sorted(files_in_db) + sorted(files_not_in_db)):
-            label = ttk.Label(master=self.frm_file_list, text=file_name, bootstyle=SUCCESS if file_name in files_in_db else SECONDARY)
-            label.pack(anchor=W)
-            label.bind("<Button-1>", lambda event, new_file=file_name: self.change_active_file_button(new_file))
-            separator = ttk.Separator(master=self.frm_file_list)
-            separator.pack(fill=X)
-
-
-    def _update_call_counter(self, count):
-        self.lbl_call_counter.config(text=f"API calls today: {count}/1500")
