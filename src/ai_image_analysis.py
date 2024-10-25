@@ -1,6 +1,5 @@
 import ast
 import json
-from typing import Tuple, List
 
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 import google.generativeai as gemini
