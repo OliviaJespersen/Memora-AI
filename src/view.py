@@ -11,9 +11,12 @@ class View:
     def __init__(self, window):
         self.window = window
         self.change_active_file_command = None
+        self.placeholder_image = None
     
 
-    def build_gui(self, placeholder_image, call_count):
+    def build_gui(self, placeholder_image):
+        self.placeholder_image = placeholder_image
+
         frm_left_bar = ttk.Frame(master=self.window, height=700, width=400)
         frm_left_bar.pack_propagate(False)
         frm_left_bar.grid(column=0, row=0, padx=(20,6), pady=20, sticky=NSEW)
@@ -28,37 +31,35 @@ class View:
         self.btn_open_directory = ttk.Button(master=frm_directory, style=SUCCESS, text="Open")
         self.btn_open_directory.pack(side=RIGHT)
         
-        self.lbl_directory = ttk.Label(master=frm_directory, style=(INVERSE, SECONDARY), text="Open a directory")
+        self.lbl_directory = ttk.Label(master=frm_directory, style=(INVERSE, SECONDARY))
         self.lbl_directory.pack(side=LEFT, padx=(6,0))
 
         frm_buttons = ttk.Frame(master=frm_left_bar)
         frm_buttons.columnconfigure([0,1,2], uniform="equal", weight=1)
         frm_buttons.pack(fill=X, side=BOTTOM)
 
-        self.btn_add = ttk.Button(master=frm_buttons, state=DISABLED, text="Add")
+        self.btn_add = ttk.Button(master=frm_buttons, text="Add")
         self.btn_add.grid(column=0, row=0, padx=(0,8), pady=(10,6), sticky=EW)
         
-        self.btn_manual_add = ttk.Button(master=frm_buttons, state=DISABLED, text="Manual Add")
+        self.btn_manual_add = ttk.Button(master=frm_buttons, text="Manual Add")
         self.btn_manual_add.grid(column=1, row=0, padx=4, pady=(10,6), sticky=EW)
 
-        self.btn_add_all = ttk.Button(master=frm_buttons, state=DISABLED, text="Add all")
+        self.btn_add_all = ttk.Button(master=frm_buttons, text="Add all")
         self.btn_add_all.grid(column=2, row=0, padx=(8,0), pady=(10,6), sticky=EW)
         
-        self.btn_remove = ttk.Button(master=frm_buttons, state=DISABLED, text="Remove")
+        self.btn_remove = ttk.Button(master=frm_buttons, text="Remove")
         self.btn_remove.grid(column=0, row=1, padx=(0,8), pady=(6,0), sticky=EW)
         
-        self.btn_reanalyze = ttk.Button(master=frm_buttons, state=DISABLED, text="Reanalyze")
+        self.btn_reanalyze = ttk.Button(master=frm_buttons, text="Reanalyze")
         self.btn_reanalyze.grid(column=1, row=1, padx=4, pady=(6,0), sticky=EW)
         
-        self.btn_open = ttk.Button(master=frm_buttons, state=DISABLED, text="Open")
+        self.btn_open = ttk.Button(master=frm_buttons, text="Open")
         self.btn_open.grid(column=2, row=1, padx=(8,0), pady=(6,0), sticky=EW)
 
         self.lbl_call_counter = ttk.Label(master=frm_left_bar)
-        self.call_count = call_count
-        self.update_call_counter(self.call_count)
         self.lbl_call_counter.pack(side=BOTTOM)
 
-        self.lbl_task_progress = ttk.Label(master=frm_left_bar, text="No task in progress")
+        self.lbl_task_progress = ttk.Label(master=frm_left_bar)
         self.lbl_task_progress.pack(side=BOTTOM, pady=(10,0))
 
         self.frm_file_browser = ttk.Frame(master=frm_left_bar)
@@ -67,10 +68,10 @@ class View:
         frm_search = ttk.Frame(master=self.frm_file_browser)
         frm_search.pack(fill=X, pady=(10,0))
         
-        self.btn_search = ttk.Button(master=frm_search, state=DISABLED, text="Search")
+        self.btn_search = ttk.Button(master=frm_search, text="Search")
         self.btn_search.pack(side=LEFT)
         
-        self.btn_show_all = ttk.Button(master=frm_search, state=DISABLED, text="Show all")
+        self.btn_show_all = ttk.Button(master=frm_search, text="Show all")
         self.btn_show_all.pack(side=RIGHT)
         
         self.ent_search = ttk.Entry(master=frm_search)
@@ -91,11 +92,10 @@ class View:
         srb_tags.pack(fill=X, side=BOTTOM)
         
         self.ent_tags = ttk.Entry(master=frm_tags_box, width=999, xscrollcommand=srb_tags.set)
-        self.ent_tags.insert(0, "Tags")
         self.ent_tags.pack(fill=X)
         srb_tags.config(command=self.ent_tags.xview)
         
-        self.btn_edit_tags = ttk.Button(master=frm_tags, state=DISABLED, text="Edit")
+        self.btn_edit_tags = ttk.Button(master=frm_tags, text="Edit")
         self.btn_edit_tags.grid(column=1, row=0, sticky=NS)
 
         frm_image_text = ttk.Frame(master=frm_right_bar)
@@ -110,18 +110,16 @@ class View:
         srb_image_text.pack(fill=X, side=BOTTOM)
 
         self.ent_image_text = ttk.Entry(master=frm_image_text_box, width=999, xscrollcommand=srb_image_text.set)
-        self.ent_image_text.insert(0, "Image Text")
         self.ent_image_text.pack(fill=X)
         srb_image_text.config(command=self.ent_image_text.xview)
 
-        self.btn_edit_image_text = ttk.Button(master=frm_image_text, state=DISABLED, text="Edit")
+        self.btn_edit_image_text = ttk.Button(master=frm_image_text, text="Edit")
         self.btn_edit_image_text.grid(column=1, row=0, sticky=NS)
 
         self.lbl_image_name = ttk.Label(master=frm_right_bar)
         self.lbl_image_name.pack(pady=(0,10))
 
         self.lbl_image = ttk.Label(master=frm_right_bar)
-        self.set_image(placeholder_image, "Select an image to get started!")
         self.lbl_image.pack()
 
 
@@ -157,6 +155,9 @@ class View:
         if state == "open_database":
             for button in [self.btn_add_all, self.btn_search, self.btn_show_all]:
                 button.config(state=ACTIVE)
+        elif state == "reset":
+            for button in [self.btn_search, self.btn_show_all, self.btn_add, self.btn_manual_add, self.btn_add_all, self.btn_remove, self.btn_reanalyze, self.btn_open, self.btn_edit_image_text, self.btn_edit_tags]:
+                button.config(state=DISABLED)
         else:
             if state == "in_database":
                 states = [ACTIVE, DISABLED, DISABLED, ACTIVE, ACTIVE, ACTIVE, ACTIVE]
@@ -179,8 +180,13 @@ class View:
             separator.pack(fill=X)
 
 
-    def set_image(self, image_path, image_name):
+    def set_image(self, image_path=None, image_name=None):
         global tk_image
+
+        if not image_path:
+            image_path = self.placeholder_image
+        if not image_name:
+            image_name = "Select an image to get started!"
 
         image = Image.open(image_path)
         tk_image = ImageTk.PhotoImage(image.resize((400,int((image.height / image.width * 400)))))

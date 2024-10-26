@@ -18,6 +18,7 @@ class Model:
     def open_database(self, create_database_file):
         database_file_path = self.active_directory+"/"+"database.json"
         self.image_database = DatabaseManagementSystem(database_file_path, create_database_file, self.auto_clean)
+        self.active_file_name = None
 
 
     def database_file_exists(self):

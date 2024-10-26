@@ -22,6 +22,8 @@ class Controller:
         self.view.bind_buttons("edit_tags", self.on_edit_tags_clicked)
         self.view.set_file_change_command(self.on_change_active_file_clicked)
 
+        self.update_view(reset=True)
+
 
     def on_open_directory_clicked(self):
         new_directory = self.view.ask_for_directory()
@@ -41,7 +43,7 @@ class Controller:
         except Exception as e:
             self.view.error_message_box(str(e))
 
-        self.update_view(interface=True, file_list=True)
+        self.update_view(reset=True, interface=True, file_list=True)
 
     
     def on_search_clicked(self):
@@ -126,7 +128,18 @@ class Controller:
         self.view.toast_message_box("Saved successfully")
 
 
-    def update_view(self, interface=False, file=False, file_list=False, search=False, result_list=([], [])):
+    def update_view(self, reset=False, interface=False, file=False, file_list=False, search=False, result_list=([], [])):
+        if reset:
+            self.view.set_directory_name("Open a directory")
+            self.view.update_buttons("reset")
+            self.view.show_files([], [])
+            self.view.reset_task_progress()
+            self.view.update_call_counter(self.model.get_call_count())
+            self.view.set_image()
+            self.view.set_image_text("Image text")
+            self.view.set_tags("Tags")
+
+        
         if interface:
             active_directory = self.model.get_active_directory()
             self.view.set_directory_name(os.path.basename(active_directory))

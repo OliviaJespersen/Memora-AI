@@ -52,7 +52,7 @@ def main():
         icon = resource_path("resources/boykisser.ico")
         window.iconbitmap(bitmap=icon)
         window.iconbitmap(default=icon)
-        view.build_gui(resource_path("resources/placeholder.png"), call_counter.get_count())
+        view.build_gui(resource_path("resources/placeholder.png"))
         
         Controller(model, view)
     except Exception as e:
