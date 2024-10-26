@@ -31,7 +31,7 @@ When you first open the config file you will be presented with a default configu
 }
 ```
 > [!CAUTION]
-> The API key **Cannot** be left as the default value and must be set.
+> The API key **CANNOT** be left as the default value and must be set.
 
 **Options**:
 - `api_key`: Your Gemini API key. You can set up one [here](https://aistudio.google.com/apikey).
