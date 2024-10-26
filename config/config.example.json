@@ -1,4 +1,5 @@
 {
     "api_key": "Your Gemini API key goes here",
-    "theme": "darkly"
+    "theme": "darkly",
+    "auto_clean": true
 }

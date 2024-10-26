@@ -32,6 +32,8 @@ def read_config_file(file_path):
         raise Exception("API key was not set in config file")
     if not "theme" in config_data or not config_data["theme"]:
         raise Exception("Theme was not set in the config file")
+    if not "auto_clean" in config_data or not isinstance(config_data["auto_clean"], bool):
+        raise Exception("Auto-clean was not set in the config file")
     
     return config_data
 
@@ -43,7 +45,7 @@ def main():
         
         gemini_ai = AiImageAnalysis(config_data["api_key"])
         call_counter = DailyApiCallCounter(resource_path("data/calls.json"))
-        model = Model(gemini_ai, call_counter)
+        model = Model(gemini_ai, call_counter, config_data["auto_clean"])
 
         window = ttk.Window(title="Memora AI", themename=config_data["theme"], resizable=(False, False))
         view = View(window)

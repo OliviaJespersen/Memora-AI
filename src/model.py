@@ -6,17 +6,18 @@ from database_management_system import DatabaseManagementSystem
 from ai_image_analysis import AiImageAnalysis
 
 class Model:
-    def __init__(self, gemini_ai: AiImageAnalysis, call_counter: DailyApiCallCounter):
+    def __init__(self, gemini_ai: AiImageAnalysis, call_counter: DailyApiCallCounter, auto_clean):
         self.gemini_ai = gemini_ai
         self.call_counter = call_counter
         self.active_directory = None
         self.active_file_name = None
         self.image_database: DatabaseManagementSystem = None
+        self.auto_clean = auto_clean
 
 
     def open_database(self, create_database_file):
         database_file_path = self.active_directory+"/"+"database.json"
-        self.image_database = DatabaseManagementSystem(database_file_path, create_database_file)
+        self.image_database = DatabaseManagementSystem(database_file_path, create_database_file, self.auto_clean)
 
 
     def database_file_exists(self):
