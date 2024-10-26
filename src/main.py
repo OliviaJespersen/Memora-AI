@@ -16,7 +16,7 @@ def resource_path(relative_path):
         base_path = sys._MEIPASS
     except AttributeError:
         base_path = os.path.abspath(".")
-    
+
     return os.path.join(base_path, relative_path)
 
 
@@ -28,32 +28,39 @@ def read_config_file(file_path):
         raise Exception("Config file was not found")
     except json.JSONDecodeError:
         raise Exception("Config file was corrupted")
-    if not "api_key" in config_data or not config_data["api_key"] or config_data["api_key"] == "Your Gemini API key goes here":
+    if (
+        "api_key" not in config_data
+        or not config_data["api_key"]
+        or config_data["api_key"] == "Your Gemini API key goes here"
+    ):
         raise Exception("API key was not set in config file")
-    if not "theme" in config_data or not config_data["theme"]:
+    if "theme" not in config_data or not config_data["theme"]:
         raise Exception("Theme was not set in the config file")
-    if not "auto_clean" in config_data or not isinstance(config_data["auto_clean"], bool):
+    if "auto_clean" not in config_data or not isinstance(
+        config_data["auto_clean"], bool
+    ):
         raise Exception("Auto-clean was not set in the config file")
-    
+
     return config_data
 
 
 def main():
-
     try:
         config_data = read_config_file(resource_path("config/config.json"))
-        
+
         gemini_ai = AiImageAnalysis(config_data["api_key"])
         call_counter = DailyApiCallCounter(resource_path("data/calls.json"))
         model = Model(gemini_ai, call_counter, config_data["auto_clean"])
 
-        window = ttk.Window(title="Memora AI", themename=config_data["theme"], resizable=(False, False))
+        window = ttk.Window(
+            title="Memora AI", themename=config_data["theme"], resizable=(False, False)
+        )
         view = View(window)
         icon = resource_path("resources/boykisser.ico")
         window.iconbitmap(bitmap=icon)
         window.iconbitmap(default=icon)
         view.build_gui(resource_path("resources/placeholder.png"))
-        
+
         Controller(model, view)
     except Exception as e:
         window = ttk.Window(title="ERROR!", themename="darkly")
@@ -62,6 +69,7 @@ def main():
         quit()
 
     window.mainloop()
+
 
 if __name__ == "__main__":
     main()

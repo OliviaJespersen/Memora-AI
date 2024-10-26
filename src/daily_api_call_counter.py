@@ -17,24 +17,22 @@ class DailyApiCallCounter:
             raise Exception("Calls file was corrupted")
         self.clean()
 
-
     def save_metadata(self):
         with open(self.storage_file_path, "w") as storage_file:
             json.dump(self.call_data, storage_file, indent=4)
-
 
     def new_call(self):
         self.call_data[self.today] += 1
         self.save_metadata()
 
-
     def get_count(self):
         return self.call_data[self.today]
-
 
     def clean(self):
         for day in [day for day in self.call_data if day != self.today]:
             del self.call_data[day]
-        if not self.today in self.call_data or not isinstance(self.call_data[self.today], int):
+        if not self.today in self.call_data or not isinstance(
+            self.call_data[self.today], int
+        ):
             self.call_data[self.today] = 0
         self.save_metadata()
