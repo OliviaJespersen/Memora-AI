@@ -2,7 +2,7 @@
 
 An image database that uses the Google's Gemini AI to analyze your memes and make them searchable based on any text in the image and a set of tags the image is assigned.
 
-![screenshot](resources\app_screenshot.png)
+![screenshot](resources/app_screenshot.png)
 
 ### Features
 - Metadata stored in a central json file for each database, avoiding the use of sidecar files.
