@@ -17,8 +17,12 @@ An image database that uses the Google's Gemini AI to analyze your memes and mak
 1. **Download**: 
     - Get the latest release from the [Releases page](https://github.com/OliviaJespersen/Memora-AI/releases).
 2. **Setup Config File**:
-    - Find the config file at `\Memora AI\_internal\config\config.json` and set it up as shown below.
-3. **Run the App**: 
+    - Find the config file at `\Memora AI\_internal\config\config.example.json` and set it up as shown below.
+    - Change the files name to `config.json`
+3. **Setup Data File**
+    - Find the config file at `\Memora AI\_internal\data\call.example.json`.
+    - Change the files name to `calls.json`
+4. **Run the App**: 
     - **Windows**: Launch the program by double-clicking the executable `Memora AI.exe`. 
 
 ### Configuration
