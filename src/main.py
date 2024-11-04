@@ -56,9 +56,10 @@ def main():
             title="Memora AI", themename=config_data["theme"], resizable=(False, False)
         )
         view = View(window)
-        icon = resource_path("resources/boykisser.ico")
-        window.iconbitmap(bitmap=icon)
-        window.iconbitmap(default=icon)
+        if sys.platform == 'win32':
+            icon = resource_path("resources/boykisser.ico")
+            window.iconbitmap(bitmap=icon)
+            window.iconbitmap(default=icon)
         view.build_gui(resource_path("resources/placeholder.png"))
 
         Controller(model, view)
